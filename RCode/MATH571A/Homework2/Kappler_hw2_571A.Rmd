@@ -294,8 +294,8 @@ alpha42c <- .05
 n42 = length(X.42)
 df42 = n42-2
 tval42c <- qt(1-alpha42c,df42)
-tstar42c <- r12*sqrt(df42)/sqrt(1-r12^2)
-P42c <- pt(tstar42c,df42)
+tstar42c<- r12*sqrt(df42)/sqrt(1-r12^2)
+P42c <- (tstar42c,df42)
 ```
 
 Our test is as follows:
@@ -315,5 +315,45 @@ if& $|t^*|> t(`r alpha42c/2`, `r df42`),$& Conclude $H_a$\\
 For $\alpha = `r alpha42c`$, the critical t-value for the one-sided test is $t(`r 1-alpha42c`,`r df42c`) = `r tval42c`$.  R gives $t^*=`r tstar42c`$.  We reject the null hypothesis that $\rho_{12} = 0$; there is insufficient evidence to conclude that the time to repair an additional copier requires on average less than 14 minutes of extra repair time.  The $P$-value is `r P5d`.
 
 `r detach(data42)`
+`r rm(list=ls())`
+##### 3.3) GPA and ACT scores
+###### b.
+```r
+data3 <- read.table("CH01PR19.txt")
+names(data3) <- c("GPA","ACT")
+attach(data3)
+model3 <- lm(data3)
 
-##### 
+plot(x=data3$ACT,y=model3$residuals,
+  main = 'Dotplot of Residuals'
+  xlab = 'ACT score',
+  ylab = 'GPA residual')
+abline(0,0)
+
+```
+No clear patterns.
+###### c.
+```r
+Yhat3 <- predict(model3,data=data3&ACT)
+plot(x=Yhat3,y=model3$residuals,
+  main = 'Residual Plot',
+  xlab = 'Predicted GPA',
+  ylab = 'Residua')
+abline(0,0)
+
+```
+I wouldn't want to commit to any observed pattern.  *Maybe* the variance is a bit larger for the extremal values. 
+###### d. 
+```r
+qqnorm(model3$residuals,
+  datax=FALSE,
+  xlab='Theoretical Quantiles',
+  ylab='Sample Quantiles')
+abline(0,1)
+shapiro.test(model3$residuals)
+```
+#TODO: The Hypothesis test! 
+Significant departure from normality  
+###### e.
+require(lawstat)
+
