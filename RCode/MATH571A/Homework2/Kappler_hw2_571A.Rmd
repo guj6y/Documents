@@ -1,0 +1,319 @@
+---
+title: "Math 571A Homework 2"
+author: "Nick Kappler"
+output: pdf_document
+header-includes: \usepackage{bbm}
+  \usepackage{amsmath}
+  \usepackage{tabularx}
+---
+
+##### 2.3.) Marketing Game
+
+While the negative slope does indicate the stated relationship, the fact that the $p$-value is so large means we can't accept the results of the regression.  The conclusion should be that marketing dollars does not significantly affect sales.
+
+##### 2.4.) 
+GPA and ACT score 
+
+###### a.
+```{r}
+data4 <- read.table("CH01PR19.txt")
+names(data4) <-c('GPA','ACT')
+attach(data4)
+model4 = lm(GPA~ACT)
+
+interval4 <- confint(model4,level=0.99)
+interval4[2,]
+```
+The 99% confidence interval for the slope parameter is (`r interval4[2,1]`,`r interval4[2,2]`).  It does not include 0.  If the confidence interval contains 0, then the slope is not significant at the 1% level.
+
+###### b.
+Our test is as follows:
+\begin{center}
+\begin{tabular}{c r}
+H$_0$:&$\beta_1 = 0$\\
+H$_a$:&$\beta_1 \neq 0$\\
+\end{tabular}
+\end{center}
+
+```{r}
+alpha4 <- 0.01
+summ4 <- summary(model4)
+tval4 <- summ4$coefficients[2,3]
+tstar4 <- qt(1-alpha4/2,model4$df)
+```
+The decision rule is:
+\begin{tabular}{c c c}
+if& $|t^*|\leq t(1-`r alpha4/2`, `r model4$df`)$,& Conclude $H_0$\\
+if& $|t^*|> t(1-`r alpha4`/2, `r model4$df`)$,& Conclude $H_a$\\
+\end{tabular}
+
+For $\alpha = 0.01$, the critical t-value is $t(`r 1-alpha4/2`,`r model4$df`) = `r tstar4`$.  R gives $t^*=`r tval4`$; reject the null.  There is significant evidence that there is  linear relation between ACT score and GPA at the end of freshman year.
+
+###### c. 
+Calculate the probability :
+\[
+\mathbbm{P}[|t(118)|>t=`r tval4`]
+\]
+But, this is also stored in R:
+```{r}
+summ4$coefficients
+```
+So, we have $P = `r summ4$coefficients[2,4]`<\alpha=.01$.  The $P$-value is less than $\alpha$, so this calculation supports the result from part b.  Under the null hypothesis, the probability of observing a sample with a $t$ statistic as large or larger than what we calculated is less than the significance level.
+`r detach(data4)`
+
+##### 2.5.)
+ Copier Maintenance
+
+##### a.
+This is just a confidence interval on $\beta_1$.
+```{r}
+alpha5 = 0.1
+data5 <- read.table("CH01PR20.txt")
+names(data5)<-c('Time','Copiers')
+attach(data5)
+model5 <- lm(Time~Copiers)
+ints5 <- confint(model5,parm='Copiers',level=1-alpha5)
+print(ints5)
+```
+So the 90\% confidence interval is $(`r ints5[1]`,`r ints5[2]`)$.  We can be 90\% confident that the increase in mean service time when the number of copiers serviced increases by 1 is between `r ints5[1]` and `r ints5[2]` hours (`r ints5[1]*60` and `r ints5[2]*60` minutes ).
+
+##### b.
+Our test is as follows:
+\begin{center}
+\begin{tabular}{c r}
+H$_0$:&$\beta_1 = 0$\\
+H$_a$:&$\beta_1 \neq 0$\\
+\end{tabular}
+
+\end{center}
+The Decision Rule is:
+\begin{tabular}{c c c}
+if& $|t^*|\leq t(1-`r alpha5/2`, `r model5$df`),$& Conclude $H_0$\\
+if& $|t^*|> t(1-`r alpha5/2`, `r model5$df`),$& Conclude $H_a$\\
+\end{tabular}
+```{r}
+summ5 <- summary(model5)
+tval5 <- summ5$coefficients[2,3]
+tstar5 <- qt(1-alpha5/2,model5$df)
+```
+For $\alpha = 0.1$, the critical t-value is $t(`r 1-alpha5`,`r model5$df`) = `r tstar5`$.  R gives $t^*=`r tval5`$;   There is significant evidence that there is  linear relation between the mean service time and the number of copiers serviced.  R says the $P$-value is $`r summ5$coefficients[2,4]`$.. or, about 0.
+
+###### c.
+Yes the results are consistent.  I expect it (if everything is done correctly) because of the equivalence of confidence intervals and hypothesis tests.  The confidence interval does not contain 0, and I rejected the null hypothesis.
+
+###### d.
+```{r}
+alpha5d <- .05
+s5d <- summ5$coefficients[2,2]
+tval5d <- (model5$coefficients[2]-14)/s5d
+tstar5d <- qt(alpha5d,model5$df)
+P5d <- pt(tval5d,df = model5$df)
+```
+
+Our test is as follows:
+\begin{center}
+\begin{tabular}{c r}
+H$_0$:&$\beta_1 \geq 14$\\
+H$_a$:&$\beta_1 < 14$\\
+\end{tabular}
+
+\end{center}
+The Decision Rule is:
+\begin{tabular}{c c c}
+if& $t^*\geq t(`r alpha5d`, `r model5$df`),$& Conclude $H_0$\\
+if& $t^*< t(`r alpha5d`, `r model5$df`),$& Conclude $H_a$\\
+\end{tabular}
+
+For $\alpha = `r alpha5d`$, the critical t-value for the one-sided test is $t(`r alpha5d`,`r model5$df`) = `r tstar5d`$.  R gives $t^*=`r tval5d`$.  We fail to reject the null hypothesis that $\beta_1 \geq 14$; there is insufficient evidence to conclude that the time to repair an additional copier requires on average less than 14 minutes of extra repair time.  The $P$-value is `r P5d`.
+
+`r detach(data5)`
+
+##### 2.13.)
+Grade Point Average
+
+```{r}
+attach(data4)
+alpha.13 = .025
+conf.int.13 <-predict(model4,data.frame(ACT=28),interval='conf',level=0.95)
+pred.int.13 <-predict(model4,data.frame(ACT=28),interval='pred',level=0.95)
+n= length(ACT)
+#Xh = seq(from=min(ACT),to=max(ACT),length=100)
+Xh.13 = 28
+Yh.13 = model4$coef[1]+Xh.13*model4$coef[2]
+se.Yh.13 = sqrt(((Xh.13-mean(ACT))^2/((n-1)*var(ACT))+1/n)*summ4$sigma^2)
+W.13 = sqrt(2*qf(1-alpha.13,2,n-2))
+
+WHSu.13 = Yh.13 + 2*se.Yh.13
+WHSl.13 = Yh.13 - 2*se.Yh.13
+WHS.int.13 <-c(WHSl.13,WHSu.13)
+#plot( WHSl ~ Xh, type='l', xlim=c(min(Xh),max(Xh)),ylim=c(0,4), xlab='', ylab='' )
+#par(new = T)
+#plot( WHSu ~ Xh, type='l', xlim=c(min(Xh),max(Xh)),ylim=c(0,4), xlab='X', ylab='E[Y]' )
+#abline(model4$coef[1],model4$coef[2])
+detach(data4)
+```
+
+###### a. 
+The 95\% confidence interval is $(`r conf.int.13[2]`,`r conf.int.13[3]`)$.  The
+
+###### b.
+The 95\% prediction interval is $(`r pred.int.13[2]`,`r pred.int.13[3]`)$.
+
+###### c.
+The prediction interval is wider.  It should be, since we must account for not only variance from the prediction, that is $\sigma(\hat{Y_h})$, but also from the SLR model itself, that is $\sigma(\varepsilon_h)$.
+
+###### d. 
+The confidence band at $X_h=28$ (the interval) is $(`r WHS.int.13[1]`,`r WHS.int.13[2]`)$, just slightly wider than the confidence interval in part a.  We expect it to be wider because the factor $W$ in the formula must take into account the entire regression line, whereas the critical $t$ value in the confidence interval needs only to take into account the single point.
+
+##### 2.24.)
+Copier maintenance
+
+######a. 
+```{r}
+anova.24 = anova(model5)
+attach(data5)
+```
+Format of Table 2.2:
+\begin{tabularx}{\textwidth}{|r| c |c| c| c}
+\textbf{Source of Variation}&SS&df&MS&$\mathbbm{E}[MS]$\\
+\hline
+Regression&$`r anova.24[1,2]`$&$`r anova.24[1,1]`$&$`r anova.24[1,3]`$&$\sigma^2+\beta_1^2`r sum((Copiers-mean(Copiers))^2)`$\\
+Error&$`r anova.24[2,2]`$&$`r anova.24[2,1]`$&$`r anova.24[2,3]`$&$\sigma^2$\\
+\hline
+Total&$`r anova.24[2,2]+anova.24[1,2]`$&$`r anova.24[1,1]+anova.24[2,1]`$&\\
+\end{tabularx}
+
+Not sure what is meant by 'additive,' but the bottom row is the sum of the top two rows.
+
+Format of Table 2.3:
+\begin{tabularx}{\textwidth}{|r|c| c| c| c}
+\textbf{Source of Variation}&SS&df&MS&$\mathbbm{E}[MS]$\\
+\hline
+Regression&$`r anova.24[1,2]`$&$`r anova.24[1,1]`$&$`r anova.24[1,3]`$&$\sigma^2+\beta_1^2`r sum((Copiers-mean(Copiers))^2)`$\\
+Error&$`r anova.24[2,2]`$&$`r anova.24[2,1]`$&$`r anova.24[2,3]`$&$\sigma^2$\\
+\hline
+Total&$`r anova.24[2,2]+anova.24[1,2]`$&$`r anova.24[1,1]+anova.24[2,1]`$&\\
+\hline
+Correction for mean&$`r length(Copiers)+mean(Copiers)^2`$&$`r length(Copiers)`$&\\
+Total, uncorrected&$`r sum(Copiers^2)`$&1&\\
+\end{tabularx}
+
+This table has two extra rows; they are a decomposition of the total sum of scares into a simple sum of squares ("total uncorrected sum of squares" ,$\sum_i Y_i^2$) and the number of observations times the mean squared ("correction for the mean sum of squares", $n\bar{Y}^2$)
+
+###### b.
+```{r}
+alpha.24 = .10
+F.crit = qf(1-alpha.24,df1 = 1,df2 = model5$df)
+F.24 = anova.24[1,4]
+detach(data5)
+```
+Our test is as follows:
+\begin{center}
+\begin{tabular}{c r}
+H$_0$:&$\beta_1 =0$\\
+H$_a$:&$\beta_1 \neq0$\\
+\end{tabular}
+
+\end{center}
+The Decision Rule is:
+\begin{tabular}{c c c}
+if& $F^*\leq F(1-`r alpha.24`,1, `r model5$df`),$& Conclude $H_0$\\
+if& $F^*> F(1-`r alpha.24`, 1,`r model5$df`),$& Conclude $H_a$\\
+\end{tabular}
+
+R says: $F^*=`r F.24` >  `r F.crit` = F(`r 1-alpha.24`,1, `r model5$df`)$, so we reject the null hypothesis and conclude that there is a significant linear association between number of copiers maintenanced and length of service.
+
+###### c.
+The total variation is reduced by $`r summ5$r.squared*100`$\%.  This is $R^2$, the coefficient of variation.  It's pretty high, though that really depends on the context; I don't know much about this field.
+
+###### d. 
+The coefficient of variation is $r = \sqrt{R^2} = `r sqrt(summ5$r.squared)`$ (choose positive since their is a positive relationship)
+
+##### 2.28.)
+Mean Muscle Mass
+
+###### a.
+```{r}
+alpha.28 = .05
+data28 = read.table("CH01PR27.txt")
+names(data28)<-c('MMM','AGE')
+attach(data28)
+model28 <- lm(MMM~AGE)
+summ28 <- summary(model28)
+conf.int.28 = predict(model28,data.frame(AGE=60),interval='confidence',level=0.95)
+pred.int.28= predict(model28,data.frame(AGE=60),interval='prediction',level=0.95)
+n= length(MMM)
+
+Xh.28 = 60
+Yh.28 = model28$coef[1]+Xh.28*model28$coef[2]
+se.Yh.28 = sqrt(((Xh.28-mean(AGE))^2/((n-1)*var(AGE))+1/n)*summ28$sigma^2)
+W.28 = sqrt(2*qf(1-alpha.28,2,n-2))
+
+WHSu.28 = Yh.28 + 2*se.Yh.28
+WHSl.28 = Yh.28 - 2*se.Yh.28
+WHS.int.28 <-c(WHSl.28,WHSu.28)
+
+detach(data28)
+```
+###### a. 
+The 95\% confidence interval is $(`r conf.int.28[2]`,`r conf.int.28[3]`)$.  We can be 95\% confident that the mean muscle mass for women 60 years old is between $`r conf.int.28[2]`$ and $`r conf.int.28[3]`$.
+
+###### b.
+The 95\% prediction interval is $(`r pred.int.28[2]`,`r pred.int.28[3]`)$.  We can be 95\% confident that the mean muscle mass for a woman who is 60 years old will be between $`r pred.int.28[2]`$ and $`r pred.int.28[3]`$.  This is wider than the confidence interval since we need to take into account the variation in muscle mass for women aged 60; in the confidence interval, the only variation we account for is in the regression model.
+
+###### c. 
+The confidence band at $X_h=60$ (the interval) is $(`r WHS.int.28[1]`,`r WHS.int.28[2]`)$, just slightly wider than the confidence interval in part a.  We expect it to be wider because the factor $W$ in the formula must take into account the entire regression line, whereas the critical $t$ value in the confidence interval needs only to take into account the single point.  It is very close in this case because the value $X_h = 60$ is very close to the mean of the $X_i$, $\bar{X} = `r mean(data28[,2])`$.
+
+##### 2.34.)
+Grade point Average
+
+###### a.
+Random Variables.  Scores on the ACT usually change when a student re-takes the test; there is inherent variability of the score for each student.  Also, the study was designed by selecting 120 raondom students, then observing the test scores and the GPA at the end of freshman year; two random variables from each subject.  If the students were chosen according to ACT score, then I think it would make more sense to treat it as known constants.
+
+##### 2.42.)
+
+###### a.
+```{r}
+data42 <- read.table(file = "CH02PR42.txt")
+names(data42) <-c('X.42','Y.42')
+attach(data42)
+plot(x=X.42,y=Y.42)
+
+
+
+```
+###### b.
+```{r}
+r12 = cor(X.42,Y.42)
+```
+$r_{12}$ is an estimator of the correlation.  The estimate is $r = `r r12`$.
+
+###### c.
+```{r}
+alpha42c <- .05
+n42 = length(X.42)
+df42 = n42-2
+tval42c <- qt(1-alpha42c,df42)
+tstar42c <- r12*sqrt(df42)/sqrt(1-r12^2)
+P42c <- pt(tstar42c,df42)
+```
+
+Our test is as follows:
+\begin{center}
+\begin{tabular}{c r}
+H$_0$:&$\rho_{12} = 0$\\
+H$_a$:&$\rho_{12} \neq 0$\\
+\end{tabular}
+
+\end{center}
+The Decision Rule is:
+\begin{tabular}{c c c}
+if& $|t^*|\leq t(`r 1-alpha42c/2`, `r df42`),$& Conclude $H_0$\\
+if& $|t^*|> t(`r alpha42c/2`, `r df42`),$& Conclude $H_a$\\
+\end{tabular}
+
+For $\alpha = `r alpha42c`$, the critical t-value for the one-sided test is $t(`r 1-alpha42c`,`r df42c`) = `r tval42c`$.  R gives $t^*=`r tstar42c`$.  We reject the null hypothesis that $\rho_{12} = 0$; there is insufficient evidence to conclude that the time to repair an additional copier requires on average less than 14 minutes of extra repair time.  The $P$-value is `r P5d`.
+
+`r detach(data42)`
+
+##### 
