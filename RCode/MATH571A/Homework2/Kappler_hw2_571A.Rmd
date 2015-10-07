@@ -318,11 +318,11 @@ For $\alpha = `r alpha42c`$, the critical t-value for the one-sided test is $t(`
 `r rm(list=ls())`
 ##### 3.3) GPA and ACT scores
 ###### b.
-```r
+```{r}
 data3 <- read.table("CH01PR19.txt")
 names(data3) <- c("GPA","ACT")
 attach(data3)
-model3 <- lm(data3)
+model3 <- lm(GPA~ACT)
 
 plot(x=data3$ACT,y=model3$residuals,
   main = 'Dotplot of Residuals',
@@ -334,7 +334,7 @@ abline(0,0)
 ```
 No clear patterns.
 ###### c.
-```r
+```{r}
 Yhat3 <- predict(model3,data=data3&ACT)
 plot(x=Yhat3,y=model3$residuals,
   main = 'Residual Plot',
@@ -345,14 +345,14 @@ abline(0,0)
 ```
 I wouldn't want to commit to any observed pattern.  *Maybe* the variance is a bit larger for the extremal values. 
 ###### d. 
-```r
+```{r}
 qqnorm(model3$residuals,
   datax=FALSE,
   xlab='Theoretical Quantiles',
   ylab='Sample Quantiles')
 abline(0,1)
 shapiro.test(model3$residuals)
-```
+``` 
 #TODO: The Hypothesis test! 
 Significant departure from normality  
 ###### e.
@@ -363,4 +363,53 @@ ei <- resid(model3)
 BF.htest=levene.test(ei,
                      group=c(ACT<26,ACT>=26),
                      location="median")
+
 ```
+##### 3.7
+###### a. 
+Stem and leaf plot:
+
+```{r}f residuals
+data7 <- read.table("CH01PR27.txt")
+names(data7) <- c("MM","AGE")
+stem(data7$AGE)
+```
+Looks consistent.  No stem is significantly larger than any other, data seems fairly clumpy (no discernable shape to speak of).
+
+###### b.
+```{r}
+attach(data7)
+model7 <- lm(MM~AGE)
+ei7 <- resid(model7)
+dotchart(ei7,
+    main = 'Dot Plot of Residuals',
+    xlab = 'Residual',
+    ylab = 'Age')
+abline(0,0)
+```
+The dot plot doesn't seem to show any significant patterns.  However, the variance does seem to increase beyond an age of about 70 years; also at about 60 years the residuals tend to be smaller.  Perhaps a model that accounts for this curvature might be more applicable. 
+ 
+###### c.
+```{r}
+plot(x=AGE,
+     y=ei7,
+     main = 'Residuals vs. AGE',
+     ylab = 'Residual',
+     xlab = 'Age'
+     )
+abline(0,0)
+
+Yhat7 <- predict(model7,newdata = data.frame(AGE))
+plot(x = Yhat7,
+     y=ei7,
+     main = 'Residuals vs. Predicted Muscle Mass',
+     xlab = 'Predicted Muscle Mass',
+     ylab = 'Residuals')
+abline(0,0)
+```
+We might have sligtly higher variance for the high age groups (Age > 70), equivalently, as muscle mass decreases past 80, the spread of the residuals seems to increase.  Furthermore, in the middle of the two graphs, there is a slight bow to the data, which may be indicative of curvilinearity.
+
+These graphs appear to be roughly mirror images of each other.  In that sense, the overall trend of the residuals is the same up to a reflection - this is because the x-axis in each plot is a simple affine transformation of the other.  However, each plot does give slightly information that isn't readily apparent in the other.  You would have to pick the one that makes the most sense for what you are talking about: if you wanted to say that residuals for higher ages have more variability you would go with the first plot.  If you wanted to say that residuals for low muscle mass have more variability, you would go with the second.  But again, the two plots will give the same overall trends; low predicted muscle mass is connected to high age through the regression function.
+
+###### d.
+
