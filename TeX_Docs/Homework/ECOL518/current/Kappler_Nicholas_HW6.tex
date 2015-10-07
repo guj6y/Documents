@@ -38,7 +38,7 @@
 \subsection*{C. Deriving the System-wide Dynamical Equation}
 We assume now that $N_{j,x}(t)$ and $N_{m,x}(t)$ are independently distributed in space ($x$) according to the negative binomial distribution.  We want a dynamical equation for $\overline{N_j}(t)$, which, by symmetry, will be identical to the dynamical equation for $\overline{N_m}(t)$.  Let also $\Ex[N_{j,x}(t)] = \overline{N_{j}}(t)$.  Then, 
 \begin{align*}
-\Ex[N_{j,x}(t+1)] &= \Ex[\lambda_{j,x}(t)]N_{j,x}(t)]\\
+\Ex[N_{j,x}(t+1)] &= \Ex[\lambda_{j,x}(t)N_{j,x}(t)]\\
 &=\Ex[Rs_jN_{j,x}(t)e^{-\alpha(N_{j,x}(t) + N_{m,x}(t))}]\\
 &=Rs_j\Ex[N_{j,x}(t)e^{-\alpha N_{j,x}(t)}e^{-\alpha N_{m,x}(t)}]\\
 \end{align*}
@@ -64,7 +64,7 @@ Now, $\Ex[N_{j,x}(t)e^{-\alpha N_{j,k}(t)}]$ is harder to deal with but notice t
 &=\Ex\left[\frac{d}{d\alpha}e^{-\alpha N_{j,x}(t)}\right]\\
 &=\Ex\left[-N_{j,x}(t)e^{-\alpha N_{j,x}(t)}\right]\\
 \end{align*}
-So, calculating $\Ex[N_{j,x}(t)e^{-\alpha N_{j,k}(t)}]$ is equivalent to calculating $-\frac{d}{d\alpha}\varphi(\alpha)$,\footnote{This can be shown, like you said in class, by appealing to the dominated convergence theorem and using the fact that $0<e^{-\alpha N_{x,j}(t)}<1$. It's straightforward: the integral of the derivative of the integrand will be defined and consistent with what we want provided the integral of the absolute value of the derivative of the integrand is defined.  That is, $\frac{d}{d\alpha}\mathbb{E}[e^{-\alpha N_{x,j}(t)}] = \mathbb{E}[\frac{d}{d\alpha}e^{-\alpha N_{x,j}(t)}]$ provided $\mathbb{E}[|\frac{d}{d\alpha}e^{-\alpha N_{x,j}(t)}|]<\infty$.  Since the exponential term is strictly between $0$ and $1$, that expectation is bounded by $1$, so we are allowed to exchange integration (expectation) and differentiation.. at least I'm pretty sure that's how it goes.  I haven't had to do much analysis the last few years and it's all a bit jumbled in my head.} a straightforward application of the chain rule from calculus:
+So, calculating $\Ex[N_{j,x}(t)e^{-\alpha N_{j,k}(t)}]$ is equivalent to calculating $-\frac{d}{d\alpha}\varphi(\alpha)$,\footnote{This can be shown, like you said in class, by appealing to the dominated convergence theorem and using the fact that $0<e^{-\alpha N_{x,j}(t)}<1$. It's straightforward: the integral of the derivative of the integrand will be defined and consistent with what we want provided the integral of the absolute value of the derivative of the integrand is defined.  That is, $\frac{d}{d\alpha}\mathbb{E}[e^{-\alpha N_{x,j}(t)}] = \mathbb{E}[\frac{d}{d\alpha}e^{-\alpha N_{x,j}(t)}]$ provided $\mathbb{E}[|\frac{d}{d\alpha}e^{-\alpha N_{x,j}(t)}|]<\infty$.  Since the exponential term is strictly between $0$ and $1$, that expectation is bounded by $1$, so we are allowed to exchange integration (expectation) and differentiation.. at least I'm pretty sure that's how it goes.  I haven't had to do much analysis the last few years and it's all a bit jumbled in my head.  If push comes to shove I could always show DCT for the difference quotient.} a straightforward application of the chain rule from calculus:
 \begin{align*}
 -\frac{d}{d\alpha}\varphi(\alpha)&=-\frac{d}{d\alpha}\left(1+\frac{\overline{N_{j}}(t)(1-e^{-\alpha})}{k}\right)^{-k}\\
 &=-(-k)\left(1+\frac{\overline{N_{j}}(t)(1-e^{-\alpha})}{k}\right)^{-k-1}\frac{\overline{N_j}(t)e^{-\alpha}}{k}\\
