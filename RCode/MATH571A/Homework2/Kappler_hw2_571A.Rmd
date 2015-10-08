@@ -412,4 +412,5 @@ We might have sligtly higher variance for the high age groups (Age > 70), equiva
 These graphs appear to be roughly mirror images of each other.  In that sense, the overall trend of the residuals is the same up to a reflection - this is because the x-axis in each plot is a simple affine transformation of the other.  However, each plot does give slightly information that isn't readily apparent in the other.  You would have to pick the one that makes the most sense for what you are talking about: if you wanted to say that residuals for higher ages have more variability you would go with the first plot.  If you wanted to say that residuals for low muscle mass have more variability, you would go with the second.  But again, the two plots will give the same overall trends; low predicted muscle mass is connected to high age through the regression function.
 
 ###### d.
-
+qqnorm(ei7)
+abline(0,1)
