@@ -318,22 +318,22 @@ For $\alpha = `r alpha42c`$, the critical t-value for the one-sided test is $t(`
 `r rm(list=ls())`
 ##### 3.3) GPA and ACT scores
 ###### b.
-```r
+```{r}
 data3 <- read.table("CH01PR19.txt")
 names(data3) <- c("GPA","ACT")
 attach(data3)
 model3 <- lm(data3)
 
-plot(x=data3$ACT,y=model3$residuals,
-  main = 'Dotplot of Residuals'
-  xlab = 'ACT score',
-  ylab = 'GPA residual')
-abline(0,0)
+dotchart(model3$residuals,
+  main = 'Dotplot of Residuals',
+  xlab = 'Residual',
+  ylab = 'Subject ID')
+
 
 ```
-No clear patterns.
+No clear patterns, we do have a few points that are potential outliers.
 ###### c.
-```r
+```{r}
 Yhat3 <- predict(model3,data=data3&ACT)
 plot(x=Yhat3,y=model3$residuals,
   main = 'Residual Plot',
@@ -342,18 +342,160 @@ plot(x=Yhat3,y=model3$residuals,
 abline(0,0)
 
 ```
-I wouldn't want to commit to any observed pattern.  *Maybe* the variance is a bit larger for the extremal values. 
+Again, I wouldn't want to commit to any observed pattern.  *Maybe* the variance is a bit larger beyond $\hat{Y}=3.2$, and a bit smaller around $\hat{Y} = 3.0$. 
 ###### d. 
-```r
+```{r}
 qqnorm(model3$residuals,
   datax=FALSE,
   xlab='Theoretical Quantiles',
   ylab='Sample Quantiles')
 abline(0,1)
-shapiro.test(model3$residuals)
+ei3 <- model3$residuals
+ps3 <- ppoints(length(ei3))
+qs3 <- qnorm(ps3)
+r3 <- cor(sort(ei3),qs3)
+alpha3d <- .05
 ```
-#TODO: The Hypothesis test! 
-Significant departure from normality  
-###### e.
-require(lawstat)
 
+Our test is as follows:
+\begin{center}
+\begin{tabular}{c r}
+H$_0$:&$\rho = 1$\\
+H$_a$:&$\rho \neq 1$\\
+\end{tabular}
+
+\end{center}
+The Decision Rule is:
+\begin{tabular}{c c c}
+if& $r\geq 0.987$& Conclude $H_0$\\
+if& $r<0.987,$& Conclude $H_a$\\
+\end{tabular}
+
+For $\alpha = `r alpha42c`$, the critical value of the correlation is larger than 0.987 (table only goes up to $n=100$, we have $n=120$).  R gives $r = `r r3`$.  We reject the null hypothesis that $\rho_{12} = 1$; there is sufficient evidence to conclude that there is a significant departure from normality in the distribution of the residuals.  There is significant evidence to conclude that the error in the linear model for predicting GPA from ACT score is non-normal.
+
+  
+###### e.
+```{r}
+require(lawstat)
+BF3.test <- levene.test(ei3[order(ACT)],group=c(rep(1,sum(ACT<26)),rep(2,sum(ACT>=26))))
+alpha3e = .01
+tval3e = qt(1-alpha3e/2,length(ei3)-2)
+Our test is as follows:
+\begin{center}
+\begin{tabular}{c r}
+H$_0$:&Mean deviation of residuals from median of low group = mean deviation of residuals from median of high group (variance homogeneity)\\
+H$_a$:&Mean deviations of residuals from low and high groups are different (variance heterogeneity)\\
+\end{tabular}
+
+\end{center}
+The Decision Rule is:
+\begin{tabular}{c c c}
+if& $|t^*_{BF}|\leq t(1-\alpha/2;n-2)$,& Conclude $H_0$\\
+if& $|t^*_{BF}|>t(1-\alpha/2;n-2),$,& Conclude $H_a$\\
+\end{tabular}
+
+For $\alpha = `r alpha3e`$, the critical t-value is `r tval3e`.  R gives $t^* =`r sqrt(BF3.test[1])`$.  We reject the null hypothesis that the variance is constant.  There is significant evidence that the variance in the simple linear model predicting GPA from ACT score is nonconstant.  This supports the preliminary findings from part (c), and the feeling overall that this data is not that well fit by a simple linear model.
+`r detach(data3)`
+`r rm(list=ls())`
+
+##### 3.7.)
+Muscle Mass
+###### a.
+```{r}
+data7 <- read.table("CH01PR27.txt")
+names(data7) <- c("MM","AGE")
+attach(data7)
+stem(AGE)
+```
+Looks like a uniform random sample of age to me.  It's not perfectly flat, but then we shouldn't expect it to be.  No clear patterns.  Maybe we should be worried to ahve so many women in their upper 80s but I'd say it's pretty consistent.
+
+###### b.
+```{r}
+model7 <- lm(MM~AGE)
+ei7 <- resid(model7)
+dotchart(ei7,
+  main = 'Dotplot of Residuals',
+  xlab = 'Residual',
+  ylab = 'Subject ID')
+```
+There seems to be at least one outlier, otherwise the residuals seem to pretty randomly distributed.
+
+###### c.
+```{r}
+Yhat7 = predict(model7,newdata = data.frame(AGE))
+plot(x=Yhat7,y=ei7,
+     main = 'Scatterplot of Residuals vs. Predicted Mean Muscle Mass',
+     xlab = 'Predicted Mean Muscle Mass',
+     ylab = 'Residual')
+
+plot(x=AGE,y=ei7,
+     main = 'Scatterplot of Residuals vs. Age',
+     xlab = 'Age',
+     ylab = 'Residual')
+
+```
+Since $\hat{Y}$ is simply a linear function of age, their is no new information you can get from one plot that isn't already contained in the ther (assuming we know the regression equation).  For instance: from the first plot I can see that when the predicted muscle mass is low, the residuals have more spread (a departure from the assumption that the error terms have constance variance).  However, since I know that the linear model has a negative slope, I can deduce from that fact that women with high age will probably have more variability in their mean muscle mass.  That is, the overall trend in the residuals is the same in both plots, except for a reflection.  The x-axis has simply been transformed.  Another potential dparture is the slight bow in the data at a mean muscle mass of about 85, and an age of about 60.
+
+###### d.
+```{r}
+qqnorm(ei7,distribution = qnorm)
+abline(0,sd(ei7))
+shapiro.test(ei7)
+```
+As we can see, since the $P>\alpha = 0.10$, we fail to reject the null hypothesis, so there is significant evidence to conclude that the residuals in the linear mdoel are normally distributed.
+
+###### e.
+```{r}
+require(lawstat)
+BF7.test <- levene.test(ei7[order(AGE)],group=c(rep(1,30),rep(2,30)),location = 'median')
+alpha7e = .01
+tval7e = qt(1-alpha7e/2,length(ei7)-2)
+```
+Our test is as follows:
+\begin{center}
+\begin{tabular}{c r}
+H$_0$:&Mean deviation of residuals from median of low group = mean deviation of residuals from median of high group (variance homogeneity)\\
+H$_a$:&Mean deviations of residuals from low and high groups are different (variance heterogeneity)\\
+\end{tabular}
+
+\end{center}
+The Decision Rule is:
+\begin{tabular}{c c c}
+if& $|t^*_{BF}|\leq t(1-\alpha/2;n-2)$,& Conclude $H_0$\\
+if& $|t^*_{BF}|>t(1-\alpha/2;n-2),$,& Conclude $H_a$\\
+\end{tabular}
+
+For $\alpha = `r alpha7e`$, the critical t-value is `r tval7e`.  R gives $t^* =`r sqrt(BF7.test[1])`$ (also, we have that $p=`r BF7.test[2]`>`r alpha7e`).
+.  We fail to reject the null hypothesis that the variance is constant.  There is not sufficient evidence to show that the variance in the simple linear model predicting Mean Muscle Mass from age is significantly nonconstant.  This does not support my preliminary feelings from c.
+
+
+
+`r detach(data7)`
+`r rm(list=ls())`
+
+##### 3.13.)
+
+###### a.
+Our test is as follows:
+\begin{center}
+\begin{tabular}{c r}
+H$_0$:&$\mathbbm{E}[Y]=\beta_0+\beta_1x$\\
+H$_a$:&$\mathbbm{E}[Y]\neq\beta_0+\beta_1x$\\
+\end{tabular}
+\end{center}
+That is, the null hypothesis states that the mean of service time at each level of $X$ (number of copiers) is linearly related to the number of copiers.
+
+###### b.
+```{r}
+data13 <- read.table("CH01PR20.txt")
+#Fit the reduced model
+names(data13) <- c("Time","Copiers")
+attach(data13)
+model13.lm = lm(Time~Copiers)
+#Fit the full model
+model13.fm = lm(Time~factor(Copiers))
+anova(model13.lm,model13.fm)
+detach(data13)
+```
+The above table gives us the statistic and more importantly, the $p$ value for the lack of fit test.  Since we have that $P = 0.4766>0.05=\alpha$, we fail to reject the null hypothesis.  There is not sufficient evidence to conclude that the Copier maintenance data are significantly poorly fitted by the lienar model.
+  There is not a significant lack of fit.
