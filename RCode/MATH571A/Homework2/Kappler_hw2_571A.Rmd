@@ -2,9 +2,7 @@
 title: "Math 571A Homework 2"
 author: "Nick Kappler"
 output: pdf_document
-header-includes: \usepackage{bbm}
-  \usepackage{amsmath}
-  \usepackage{tabularx}
+header-includes: \usepackage{bbm} \usepackage{amsmath} \usepackage{tabularx}
 ---
 
 ##### 2.3.) Marketing Game
@@ -24,6 +22,7 @@ model4 = lm(GPA~ACT)
 interval4 <- confint(model4,level=0.99)
 interval4[2,]
 ```
+
 The 99% confidence interval for the slope parameter is (`r interval4[2,1]`,`r interval4[2,2]`).  It does not include 0.  If the confidence interval contains 0, then the slope is not significant at the 1% level.
 
 ###### b.
@@ -41,6 +40,7 @@ summ4 <- summary(model4)
 tval4 <- summ4$coefficients[2,3]
 tstar4 <- qt(1-alpha4/2,model4$df)
 ```
+
 The decision rule is:
 \begin{tabular}{c c c}
 if& $|t^*|\leq t(1-`r alpha4/2`, `r model4$df`)$,& Conclude $H_0$\\
@@ -58,6 +58,7 @@ But, this is also stored in R:
 ```{r}
 summ4$coefficients
 ```
+
 So, we have $P = `r summ4$coefficients[2,4]`<\alpha=.01$.  The $P$-value is less than $\alpha$, so this calculation supports the result from part b.  Under the null hypothesis, the probability of observing a sample with a $t$ statistic as large or larger than what we calculated is less than the significance level.
 `r detach(data4)`
 
@@ -75,7 +76,8 @@ model5 <- lm(Time~Copiers)
 ints5 <- confint(model5,parm='Copiers',level=1-alpha5)
 print(ints5)
 ```
-So the 90\% confidence interval is $(`r ints5[1]`,`r ints5[2]`)$.  We can be 90\% confident that the increase in mean service time when the number of copiers serviced increases by 1 is between `r ints5[1]` and `r ints5[2]` hours (`r ints5[1]*60` and `r ints5[2]*60` minutes ).
+
+So the 90\% confidence interval is $(`r ints5[1]`,`r ints5[2]`)$.  We can be 90\% confident that the increase in mean service time when the number of copiers serviced increases by 1 is between $`r ints5[1]`$ and $`r ints5[2]`$ hours $(`r ints5[1]*60`$ and $`r ints5[2]*60`$ minutes ).
 
 ##### b.
 Our test is as follows:
@@ -96,6 +98,7 @@ summ5 <- summary(model5)
 tval5 <- summ5$coefficients[2,3]
 tstar5 <- qt(1-alpha5/2,model5$df)
 ```
+
 For $\alpha = 0.1$, the critical t-value is $t(`r 1-alpha5`,`r model5$df`) = `r tstar5`$.  R gives $t^*=`r tval5`$;   There is significant evidence that there is  linear relation between the mean service time and the number of copiers serviced.  R says the $P$-value is $`r summ5$coefficients[2,4]`$.. or, about 0.
 
 ###### c.
@@ -124,7 +127,7 @@ if& $t^*\geq t(`r alpha5d`, `r model5$df`),$& Conclude $H_0$\\
 if& $t^*< t(`r alpha5d`, `r model5$df`),$& Conclude $H_a$\\
 \end{tabular}
 
-For $\alpha = `r alpha5d`$, the critical t-value for the one-sided test is $t(`r alpha5d`,`r model5$df`) = `r tstar5d`$.  R gives $t^*=`r tval5d`$.  We fail to reject the null hypothesis that $\beta_1 \geq 14$; there is insufficient evidence to conclude that the time to repair an additional copier requires on average less than 14 minutes of extra repair time.  The $P$-value is `r P5d`.
+For $\alpha = `r alpha5d`$, the critical t-value for the one-sided test is $t(`r alpha5d`,`r model5$df`) = `r tstar5d`$.  R gives $t^*=`r tval5d`$.  We fail to reject the null hypothesis that $\beta_1 \geq 14$; there is insufficient evidence to conclude that the time to repair an additional copier requires on average less than 14 minutes of extra repair time.  The $P$-value is $`r P5d`$.
 
 `r detach(data5)`
 
@@ -173,6 +176,7 @@ Copier maintenance
 anova.24 = anova(model5)
 attach(data5)
 ```
+
 Format of Table 2.2:
 \begin{tabularx}{\textwidth}{|r| c |c| c| c}
 \textbf{Source of Variation}&SS&df&MS&$\mathbbm{E}[MS]$\\
@@ -207,6 +211,7 @@ F.crit = qf(1-alpha.24,df1 = 1,df2 = model5$df)
 F.24 = anova.24[1,4]
 detach(data5)
 ```
+
 Our test is as follows:
 \begin{center}
 \begin{tabular}{c r}
@@ -240,8 +245,8 @@ names(data28)<-c('MMM','AGE')
 attach(data28)
 model28 <- lm(MMM~AGE)
 summ28 <- summary(model28)
-conf.int.28 = predict(model28,data.frame(AGE=60),interval='confidence',level=0.95)
-pred.int.28= predict(model28,data.frame(AGE=60),interval='prediction',level=0.95)
+conf.int.28 <- predict(model28,data.frame(AGE=60),interval='confidence',level=0.95)
+pred.int.28 <- predict(model28,data.frame(AGE=60),interval='prediction',level=0.95)
 n= length(MMM)
 
 Xh.28 = 60
@@ -255,6 +260,7 @@ WHS.int.28 <-c(WHSl.28,WHSu.28)
 
 detach(data28)
 ```
+
 ###### a. 
 The 95\% confidence interval is $(`r conf.int.28[2]`,`r conf.int.28[3]`)$.  We can be 95\% confident that the mean muscle mass for women 60 years old is between $`r conf.int.28[2]`$ and $`r conf.int.28[3]`$.
 
@@ -271,6 +277,7 @@ Grade point Average
 Random Variables.  Scores on the ACT usually change when a student re-takes the test; there is inherent variability of the score for each student.  Also, the study was designed by selecting 120 raondom students, then observing the test scores and the GPA at the end of freshman year; two random variables from each subject.  If the students were chosen according to ACT score, then I think it would make more sense to treat it as known constants.
 
 ##### 2.42.)
+Property Assessments
 
 ###### a.
 ```{r}
@@ -278,14 +285,13 @@ data42 <- read.table(file = "CH02PR42.txt")
 names(data42) <-c('X.42','Y.42')
 attach(data42)
 plot(x=X.42,y=Y.42)
-
-
-
 ```
+
 ###### b.
 ```{r}
 r12 = cor(X.42,Y.42)
 ```
+
 $r_{12}$ is an estimator of the correlation.  The estimate is $r = `r r12`$.
 
 ###### c.
@@ -295,7 +301,7 @@ n42 = length(X.42)
 df42 = n42-2
 tval42c <- qt(1-alpha42c,df42)
 tstar42c<- r12*sqrt(df42)/sqrt(1-r12^2)
-P42c <- (tstar42c,df42)
+P42c <- 2*pt(-tstar42c,df42)
 ```
 
 Our test is as follows:
@@ -312,11 +318,12 @@ if& $|t^*|\leq t(`r 1-alpha42c/2`, `r df42`),$& Conclude $H_0$\\
 if& $|t^*|> t(`r alpha42c/2`, `r df42`),$& Conclude $H_a$\\
 \end{tabular}
 
-For $\alpha = `r alpha42c`$, the critical t-value for the one-sided test is $t(`r 1-alpha42c`,`r df42c`) = `r tval42c`$.  R gives $t^*=`r tstar42c`$.  We reject the null hypothesis that $\rho_{12} = 0$; there is insufficient evidence to conclude that the time to repair an additional copier requires on average less than 14 minutes of extra repair time.  The $P$-value is `r P5d`.
+For $\alpha = `r alpha42c`$, the critical t-value for the one-sided test is $t(`r 1-alpha42c`,`r df42`) = `r tval42c`$.  R gives $t^*=`r tstar42c`$.  We reject the null hypothesis that $\rho_{12} = 0$; there is insufficient evidence to conclude that the time to repair an additional copier requires on average less than 14 minutes of extra repair time.  The $P$-value is $`r P42c`$.
 
 `r detach(data42)`
-`r rm(list=ls())`
-##### 3.3) GPA and ACT scores
+##### 3.3)
+GPA and ACT scores
+
 ###### b.
 ```{r}
 data3 <- read.table("CH01PR19.txt")
@@ -328,10 +335,10 @@ dotchart(model3$residuals,
   main = 'Dotplot of Residuals',
   xlab = 'Residual',
   ylab = 'Subject ID')
-
-
 ```
+
 No clear patterns, we do have a few points that are potential outliers.
+
 ###### c.
 ```{r}
 Yhat3 <- predict(model3,data=data3&ACT)
@@ -340,16 +347,17 @@ plot(x=Yhat3,y=model3$residuals,
   xlab = 'Predicted GPA',
   ylab = 'Residua')
 abline(0,0)
-
 ```
-Again, I wouldn't want to commit to any observed pattern.  *Maybe* the variance is a bit larger beyond $\hat{Y}=3.2$, and a bit smaller around $\hat{Y} = 3.0$. 
+
+Again, I wouldn't want to commit to any observed pattern.  *Maybe* the variance is a bit larger beyond $\hat{Y}=3.2$, and a bit smaller around $\hat{Y} = 3.0$.
+
 ###### d. 
 ```{r}
 qqnorm(model3$residuals,
   datax=FALSE,
   xlab='Theoretical Quantiles',
   ylab='Sample Quantiles')
-abline(0,1)
+abline(0,sd(model3$residuals))
 ei3 <- model3$residuals
 ps3 <- ppoints(length(ei3))
 qs3 <- qnorm(ps3)
@@ -371,15 +379,17 @@ if& $r\geq 0.987$& Conclude $H_0$\\
 if& $r<0.987,$& Conclude $H_a$\\
 \end{tabular}
 
-For $\alpha = `r alpha42c`$, the critical value of the correlation is larger than 0.987 (table only goes up to $n=100$, we have $n=120$).  R gives $r = `r r3`$.  We reject the null hypothesis that $\rho_{12} = 1$; there is sufficient evidence to conclude that there is a significant departure from normality in the distribution of the residuals.  There is significant evidence to conclude that the error in the linear model for predicting GPA from ACT score is non-normal.
+For $\alpha = `r alpha3d`$, the critical value of the correlation is larger than 0.987 (table only goes up to $n=100$, we have $n=120$).  R gives $r = `r r3`$.  We reject the null hypothesis that $\rho_{12} = 1$; there is sufficient evidence to conclude that there is a significant departure from normality in the distribution of the residuals.  There is significant evidence to conclude that the error in the linear model for predicting GPA from ACT score is non-normal.
 
   
 ###### e.
+`r require(lawstat)`
 ```{r}
-require(lawstat)
 BF3.test <- levene.test(ei3[order(ACT)],group=c(rep(1,sum(ACT<26)),rep(2,sum(ACT>=26))))
-alpha3e = .01
+alpha3e <- .01
 tval3e = qt(1-alpha3e/2,length(ei3)-2)
+```
+
 Our test is as follows:
 \begin{center}
 \begin{tabular}{c r}
@@ -394,12 +404,13 @@ if& $|t^*_{BF}|\leq t(1-\alpha/2;n-2)$,& Conclude $H_0$\\
 if& $|t^*_{BF}|>t(1-\alpha/2;n-2),$,& Conclude $H_a$\\
 \end{tabular}
 
-For $\alpha = `r alpha3e`$, the critical t-value is `r tval3e`.  R gives $t^* =`r sqrt(BF3.test[1])`$.  We reject the null hypothesis that the variance is constant.  There is significant evidence that the variance in the simple linear model predicting GPA from ACT score is nonconstant.  This supports the preliminary findings from part (c), and the feeling overall that this data is not that well fit by a simple linear model.
+For $\alpha = `r alpha3e`$, the critical t-value is `r tval3e`.  R gives $t^* =`r sqrt(BF3.test$statistic)`$.  We reject the null hypothesis that the variance is constant.  There is significant evidence that the variance in the simple linear model predicting GPA from ACT score is nonconstant.  This supports the preliminary findings from part (c), and the feeling overall that this data is not that well fit by a simple linear model.
+
 `r detach(data3)`
-`r rm(list=ls())`
 
 ##### 3.7.)
 Muscle Mass
+
 ###### a.
 ```{r}
 data7 <- read.table("CH01PR27.txt")
@@ -407,6 +418,7 @@ names(data7) <- c("MM","AGE")
 attach(data7)
 stem(AGE)
 ```
+
 Looks like a uniform random sample of age to me.  It's not perfectly flat, but then we shouldn't expect it to be.  No clear patterns.  Maybe we should be worried to ahve so many women in their upper 80s but I'd say it's pretty consistent.
 
 ###### b.
@@ -418,6 +430,7 @@ dotchart(ei7,
   xlab = 'Residual',
   ylab = 'Subject ID')
 ```
+
 There seems to be at least one outlier, otherwise the residuals seem to pretty randomly distributed.
 
 ###### c.
@@ -434,29 +447,32 @@ plot(x=AGE,y=ei7,
      ylab = 'Residual')
 
 ```
+
 Since $\hat{Y}$ is simply a linear function of age, their is no new information you can get from one plot that isn't already contained in the ther (assuming we know the regression equation).  For instance: from the first plot I can see that when the predicted muscle mass is low, the residuals have more spread (a departure from the assumption that the error terms have constance variance).  However, since I know that the linear model has a negative slope, I can deduce from that fact that women with high age will probably have more variability in their mean muscle mass.  That is, the overall trend in the residuals is the same in both plots, except for a reflection.  The x-axis has simply been transformed.  Another potential dparture is the slight bow in the data at a mean muscle mass of about 85, and an age of about 60.
 
 ###### d.
 ```{r}
-qqnorm(ei7,distribution = qnorm)
+qqnorm(ei7)
 abline(0,sd(ei7))
 shapiro.test(ei7)
 ```
+
 As we can see, since the $P>\alpha = 0.10$, we fail to reject the null hypothesis, so there is significant evidence to conclude that the residuals in the linear mdoel are normally distributed.
 
 ###### e.
+
 ```{r}
-require(lawstat)
 BF7.test <- levene.test(ei7[order(AGE)],group=c(rep(1,30),rep(2,30)),location = 'median')
 alpha7e = .01
 tval7e = qt(1-alpha7e/2,length(ei7)-2)
 ```
+
 Our test is as follows:
 \begin{center}
-\begin{tabular}{c r}
+\begin{tabularx}{\textwidth}{c X}
 H$_0$:&Mean deviation of residuals from median of low group = mean deviation of residuals from median of high group (variance homogeneity)\\
 H$_a$:&Mean deviations of residuals from low and high groups are different (variance heterogeneity)\\
-\end{tabular}
+\end{tabularx}
 
 \end{center}
 The Decision Rule is:
@@ -465,15 +481,15 @@ if& $|t^*_{BF}|\leq t(1-\alpha/2;n-2)$,& Conclude $H_0$\\
 if& $|t^*_{BF}|>t(1-\alpha/2;n-2),$,& Conclude $H_a$\\
 \end{tabular}
 
-For $\alpha = `r alpha7e`$, the critical t-value is `r tval7e`.  R gives $t^* =`r sqrt(BF7.test[1])`$ (also, we have that $p=`r BF7.test[2]`>`r alpha7e`).
-.  We fail to reject the null hypothesis that the variance is constant.  There is not sufficient evidence to show that the variance in the simple linear model predicting Mean Muscle Mass from age is significantly nonconstant.  This does not support my preliminary feelings from c.
+For $\alpha = `r alpha7e`$, the critical t-value is $`r tval7e`$.  R gives $t^* =`r sqrt(BF7.test$statistic)`$ (also, we have that $p=`r BF7.test[2]`>`r alpha7e`).  We fail to reject the null hypothesis that the variance is constant.  There is not sufficient evidence to show that the variance in the simple linear model predicting Mean Muscle Mass from age is significantly nonconstant.  This does not support my preliminary feelings from c.
 
 
 
 `r detach(data7)`
-`r rm(list=ls())`
+
 
 ##### 3.13.)
+Copier maintenance
 
 ###### a.
 Our test is as follows:
@@ -497,5 +513,152 @@ model13.fm = lm(Time~factor(Copiers))
 anova(model13.lm,model13.fm)
 detach(data13)
 ```
-The above table gives us the statistic and more importantly, the $p$ value for the lack of fit test.  Since we have that $P = 0.4766>0.05=\alpha$, we fail to reject the null hypothesis.  There is not sufficient evidence to conclude that the Copier maintenance data are significantly poorly fitted by the lienar model.
+
+The above table gives us the statistic and more importantly, the $P$ value for the lack of fit test.  Since we have that $P = 0.4766>0.05=\alpha$, we fail to reject the null hypothesis.  There is not sufficient evidence to conclude that the Copier maintenance data are significantly poorly fitted by the linear model.
   There is not a significant lack of fit.
+
+##### 3.17.)
+Sales growth
+
+###### a.
+```{r}
+data17 <- read.table("CH03PR17.txt")
+names(data17) <- c("Sales","Year")
+attach(data17)
+plot(x=Year,y=Sales,
+      main = 'Sales vs Coded Year',
+      ylab = "Sales ($1000's)",
+      xlab = "Year (coded")
+```
+
+The linear relation seems fairly strong throughthe first 8 data ponts, however, the last two (Year=8,9) seem to buck that trend just a little bit and a model that allows a slight curvature would fit much better than a linear model.
+
+###### b. 
+```{r}
+library(MASS)
+model17.lm <- lm(Sales~Year)
+model17.bc <- boxcox(model17.lm,
+                     lambda = seq(.3,.7,.1),
+                     interp = F)
+```
+
+The Log-Likelihood is maximized ath $\lambda=0.5$, so the transformation $Y\mapsto\sqrt{Y}$ is suggested.
+
+###### c.
+```{r}
+Sales.sqrt <- sqrt(Sales)
+model17.lm.txfm <- lm(Sales.sqrt~Year)
+```
+
+The estimated regression function is $\mathbbm{E}[\sqrt{Y}] = `r model17.lm.txfm$coefficients[1]` + `r model17.lm.txfm$coefficients[2]`x$.
+
+###### d. 
+```{r}
+plot(x=Year,
+     y=Sales.sqrt,
+     main = 'Transformed Scatterplot',
+     xlab = 'Coded Year',
+     ylab = 'Sqrt(Sales)')
+abline(model17.lm.txfm)
+```
+
+The regression function seems to be a good fit to the transformed data.
+
+###### e.
+```{r}
+ei17 <- resid(model17.lm.txfm)
+Yhat17 <- predict(model17.lm.txfm,newdata = data.frame(Year))
+plot(x=Yhat17,y=ei17,
+      main = 'Residuals vs. Predicted transformed sales value')
+abline(0,0)
+qqnorm(ei17)
+abline(0,sd(ei17))
+```
+
+Both the residual plot and the normal Q-Q plot show a pretty good fit to the data.  The residual plot shows a random scatter about 0 with no clear patterns, while the normal Q-Q plot shows a pretty good fit to the line throught he origin.
+
+###### f.
+We have:
+\[
+\mathbbm{E}[\sqrt{Y}] = `r model17.lm.txfm$coefficients[1]` + `r model17.lm.txfm$coefficients[2]`X
+\],
+that is, 
+\[
+\sqrt{\hat{Y_h}} = `r model17.lm.txfm$coefficients[1]` + `r model17.lm.txfm$coefficients[2]`X_h
+\]
+So, squaring both sides gives:
+\[
+\hat{Y_h} = (`r model17.lm.txfm$coefficients[1]` + `r model17.lm.txfm$coefficients[2]`X_h)^2
+\]
+
+##### 3.20.)
+For the transofrmation $X'=1/X$, the simple linear model becomes the following:
+\[
+Y = \beta_0+\beta_1\frac{1}{X} + \varepsilon
+\]
+So the error terms do not change.  When we make the transformation $Y' = 1/Y$, the simple linear model is:
+\[
+Y' = \frac{1}{Y} = \beta_0+\beta_1X+\varepsilon
+\]
+Since $\beta_i, X$ are constants, we could re-write as
+\[
+Y' = \varepsilon^*
+\]
+where $\varepsilon^* \sim N(\beta_0+\beta_1X,\sigma^2)$.  Now, the error terms for the transformed model are, by assumption, the same since we just have a simple linear model for $1/Y$.  However, in terms of the original variable, $Y$, the model itself has changed quite profoundly:
+\[
+Y = \frac{1}{\varepsilon^*}=\frac{1}{\beta_0+\beta_1X+\varepsilon}
+\]
+So $Y$ now has a reciprocal normal distribution and the error term is no longer additive - it is no longer a straightforward matter to determine the effect of the error term on the original response variable (besides just writing down the above equation).  Note that $Y$ is now distributed as a reciprocal normal random variable and has no finite moments, and we will probably run into trouble if $Y'$ is close to 0.
+
+##### 3.24
+Blood presure.
+
+###### a.
+```{r}
+data24 <- read.table("CH03PR24.txt")
+names(data24) <- c("dBP","Age")
+attach(data24)
+model24 <- lm(dBP~Age)
+beta1.24 <- model24$coefficients[2]
+beta0.24 <- model24$coefficients[1]
+ei24 <- resid(model24)
+plot(x=Age,
+     y=ei24,
+     main = "Residuals against Age",
+     xlab = "Age",
+     ylab = "Residual")
+abline(0,0)
+```
+
+The regression function is 
+\[
+\mathbbm{E}[Y] =`r beta0.24` + `r beta1.24` X 
+\]
+The residual plot shows that we have a large outlier and perhaps a slight bow to the data.
+
+###### b.
+```{r}
+data24b <- data24[-7,]
+names(data24b) <- c('dBP','Age')
+detach(data24)
+attach(data24b)
+model24b <- lm(dBP ~ Age)
+beta0.24b <- model24b$coefficients[1]
+beta1.24b <- model24b$coefficients[2]
+```
+
+The modified regression function is
+\[
+\mathbbm{E}[Y] =`r beta0.24` + `r beta1.24` X 
+\]
+Data point 7 had a very large effect on both parameters in the regression equation.  It raised the slope significantly compared to the model with data point 7 omitted.
+
+###### c.
+```{r}
+pred.interval24c <- predict(model24b,
+                            data.frame(Age=12),
+                            interval= "pred",
+                            level = 0.99)
+```
+
+The prediction interval for $X = 12$ is $(`r pred.interval24c[2]`,`r pred.interval24c[3]`)$.  Since observation $Y_7$ falls outside that range, there is a less than 1% chance of seeing a value that far off of the regression line.  Somethng may be wrong with that data point, or we just need to collect more data.
